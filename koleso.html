@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koleso osudu</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .wheel-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .wheel-title {
+            font-family: 'Pacifico', cursive;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin-bottom: 30px;
+        }
+
+        .wheel-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .wheel-btn {
+            padding: 14px 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+        }
+
+        .wheel-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .wheel-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wheel-result {
+            margin-top: 25px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            min-height: 40px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .wheel-result.show {
+            opacity: 1;
+        }
+
+        .wheel-img {
+            margin-top: 20px;
+            max-width: 280px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .wheel-img.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="btn-back">&#8592; sp&#228;&#357;</a>
+
+    <div class="wheel-page">
+        <h2 class="wheel-title">Zato&#269; koliesko</h2>
+
+        <div class="wheel-container">
+            <div class="wheel-pointer">&#9660;</div>
+            <canvas class="wheel-canvas" id="wheel" width="640" height="640"></canvas>
+        </div>
+
+        <button class="wheel-btn" id="spin-btn" onclick="spinWheel()">zato&#269;i&#357;</button>
+
+        <div class="wheel-result" id="result"></div>
+        <img class="wheel-img" id="result-img" src="" alt="">
+    </div>
+
+    <script>
+        const items = [
+            'Mária ti bude celý deň slúžiť',
+            'pošleš mi 10 euro',
+            'vezmem ťa na ryby',
+            'ostrihám ťa zadarmo',
+            'zatancujem ti',
+            'kupim ti pivec keď prídeš'
+        ];
+
+        const colors = [
+            '#f472b6', '#a78bfa', '#fb923c', '#38bdf8',
+            '#f87171', '#34d399'
+        ];
+
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const resultEl = document.getElementById('result');
+        const resultImg = document.getElementById('result-img');
+        const spinBtn = document.getElementById('spin-btn');
+
+        let currentRotation = 0;
+        let spinning = false;
+
+        function drawWheel() {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = cx - 10;
+            const sliceAngle = (2 * Math.PI) / items.length;
+
+            items.forEach((item, i) => {
+                const start = i * sliceAngle;
+                const end = start + sliceAngle;
+
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, start, end);
+                ctx.closePath();
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(start + sliceAngle / 2);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 18px Quicksand, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+
+                const text = item;
+                const maxWidth = r - 40;
+                if (ctx.measureText(text).width > maxWidth) {
+                    const words = text.split(' ');
+                    let line1 = '';
+                    let line2 = '';
+                    let onSecond = false;
+                    for (const word of words) {
+                        if (!onSecond && ctx.measureText(line1 + ' ' + word).width < maxWidth) {
+                            line1 += (line1 ? ' ' : '') + word;
+                        } else {
+                            onSecond = true;
+                            line2 += (line2 ? ' ' : '') + word;
+                        }
+                    }
+                    ctx.fillText(line1, r - 25, -8);
+                    ctx.fillText(line2, r - 25, 12);
+                } else {
+                    ctx.fillText(text, r - 25, 0);
+                }
+
+                ctx.restore();
+            });
+
+            // center circle
+            ctx.beginPath();
+            ctx.arc(cx, cy, 30, 0, 2 * Math.PI);
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function spinWheel() {
+            if (spinning) return;
+            spinning = true;
+            spinBtn.disabled = true;
+            resultEl.classList.remove('show');
+            resultImg.classList.remove('show');
+
+            const extraSpins = 5 + Math.floor(Math.random() * 5);
+            const randomAngle = Math.random() * 360;
+            const totalRotation = extraSpins * 360 + randomAngle;
+
+            currentRotation += totalRotation;
+            canvas.style.transform = 'rotate(' + currentRotation + 'deg)';
+
+            setTimeout(() => {
+                const sliceAngle = 360 / items.length;
+                const normalized = currentRotation % 360;
+                // pointer is at top (270deg in canvas coords)
+                const pointerAngle = (360 - normalized + 270) % 360;
+                const index = Math.floor(pointerAngle / sliceAngle) % items.length;
+
+                resultEl.textContent = items[index];
+                resultEl.classList.add('show');
+                const imgMap = {
+                    1: 'img/wheel-1.jpg',
+                    2: 'img/wheel-2.webp',
+                    3: 'img/wheel-3.webp',
+                    4: 'img/wheel-4.jpg',
+                    5: 'img/wheel-5.gif',
+                    6: 'img/wheel-6.jpg'
+                };
+                resultImg.src = imgMap[index + 1];
+                resultImg.classList.add('show');
+                spinning = false;
+                spinBtn.disabled = false;
+            }, 4200);
+        }
+
+        drawWheel();
+    </script>
+</body>
+</html>

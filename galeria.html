@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .slider-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .slider {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .slider-img {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .slider-caption {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .slider-sub {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 5px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .slider-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .slider-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .slider-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .slider-counter {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.35);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="btn-back">&#8592; sp&#228;&#357;</a>
+
+    <div class="slider-page">
+        <h2 class="gallery-title">Galerka type shit</h2>
+        <div class="slider">
+            <img class="slider-img" id="slider-img" src="" alt="">
+            <video class="slider-img" id="slider-video" controls playsinline style="display:none"></video>
+            <p class="slider-caption" id="slider-caption"></p>
+            <p class="slider-sub" id="slider-sub"></p>
+            <div class="slider-controls">
+                <button class="slider-btn" onclick="prev()">&#8592;</button>
+                <span class="slider-counter" id="counter"></span>
+                <button class="slider-btn" onclick="next()">&#8594;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slides = [
+            { src: 'img/dada-1.jpg', type: 'img', caption: 'sisters before mistress', sub: 'ci jak sa to dpc pise' },
+            { src: 'img/dada-2.jpg', type: 'img', caption: 'celkom pekná fotka..', sub: 'hovorím o sebe' },
+            { src: 'img/dada-3.jpg', type: 'img', caption: 'hmmm... sexi', sub: 'ukáž Tobiasovi' },
+            { src: 'img/dada-4.PNG', type: 'img', caption: 'fav správy', sub: 'ale už na mňa nemylíš' },
+            { src: 'img/dada-5.mov', type: 'video', caption: 'vnutornú harmóniu????', sub: 'medzi tými vešiakmi som si uvedomila, že chcem žiť...' },
+            { src: 'img/dada-6.MOV', type: 'video', caption: 'FLIP FLOP', sub: 'flupadupadup'}
+        ];
+
+        let current = 0;
+        const imgEl = document.getElementById('slider-img');
+        const videoEl = document.getElementById('slider-video');
+        const captionEl = document.getElementById('slider-caption');
+        const subEl = document.getElementById('slider-sub');
+        const counterEl = document.getElementById('counter');
+
+        function show(i) {
+            current = i;
+            const slide = slides[i];
+            captionEl.textContent = slide.caption;
+            subEl.textContent = slide.sub;
+            counterEl.textContent = (i + 1) + ' / ' + slides.length;
+
+            if (slide.type === 'video') {
+                imgEl.style.display = 'none';
+                videoEl.src = slide.src;
+                videoEl.style.display = 'block';
+                videoEl.play();
+            } else {
+                videoEl.style.display = 'none';
+                videoEl.pause();
+                imgEl.src = slide.src;
+                imgEl.style.display = 'block';
+            }
+        }
+
+        function next() {
+            show((current + 1) % slides.length);
+        }
+
+        function prev() {
+            show((current - 1 + slides.length) % slides.length);
+        }
+
+        show(0);
+    </script>
+</body>
+</html>

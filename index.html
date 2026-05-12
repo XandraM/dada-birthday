@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD SFINO</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="countdown-overlay" id="countdown">
+        <img class="countdown-img" src="img/countdown.jpeg" alt="">
+        <div class="countdown-title">ešte ne.</div>
+        <div class="countdown-subtitle">(it's not much but i tried)</div>
+        <div class="countdown-timer">
+            <div class="countdown-box">
+                <span class="number" id="days">0</span>
+                <span class="label">dni</span>
+            </div>
+            <div class="countdown-box">
+                <span class="number" id="hours">0</span>
+                <span class="label">hod</span>
+            </div>
+            <div class="countdown-box">
+                <span class="number" id="minutes">0</span>
+                <span class="label">min</span>
+            </div>
+            <div class="countdown-box">
+                <span class="number" id="seconds">0</span>
+                <span class="label">sek</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="container">
+            <div class="profile-photo-wrap">
+                <div class="profile-photo">
+                    <img src="img/dada.jpg" alt="Dada" class="photo-default">
+                    <img src="img/dada-hover.jpg" alt="Dada" class="photo-hover">
+                </div>
+            </div>
+            <div class="age">23</div>
+            <h1>Všetko najlepšie!</h1>
+
+            <div class="gift-wrap" id="gift-wrap" onclick="unwrapGift()">
+                <div class="gift-box">
+                    <div class="gift-lid">&#127873;</div>
+                    <p class="gift-text">klikni a rozbaľ</p>
+                </div>
+            </div>
+
+            <div class="video-reveal hidden" id="video-reveal">
+                <iframe
+                    id="yt-player"
+                    width="560"
+                    height="315"
+                    src="https://www.youtube.com/embed/hzgr_wpdENI?enablejsapi=1"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <p class="message">
+                23 obdivuhodných rokov strateného somálskeho dieťaťa... fascinujúce
+            </p>
+            <p class="message-sub">od tvojej obľúbenej sestry</p>
+            <a href="galeria.html" class="btn-gallery">nejaké fotečky</a>
+            <a href="koleso.html" class="btn-gallery">zatoč koliesko</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
