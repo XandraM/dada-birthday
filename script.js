@@ -1,4 +1,4 @@
-const targetDate = new Date('2025-05-13T00:00:00');
+const targetDate = new Date('2026-05-13T00:00:00');
 const countdownEl = document.getElementById('countdown');
 const daysEl = document.getElementById('days');
 const hoursEl = document.getElementById('hours');
